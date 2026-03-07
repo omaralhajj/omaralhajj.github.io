@@ -1,0 +1,47 @@
+---
+const projects = [
+  {
+    name: 'Project Alpha',
+    description: 'A short description of what this project does and why it exists.',
+    tech: ['TypeScript', 'React', 'PostgreSQL'],
+    url: '#',
+  },
+  {
+    name: 'Project Beta',
+    description: 'A short description of what this project does and why it exists.',
+    tech: ['Go', 'Docker', 'AWS'],
+    url: '#',
+  },
+  {
+    name: 'Project Gamma',
+    description: 'A short description of what this project does and why it exists.',
+    tech: ['Python', 'FastAPI', 'Redis'],
+    url: '#',
+  },
+]
+---
+
+<section id="projects" class="max-w-2xl mx-auto px-6 py-16 border-t fade-in" style="border-color: var(--color-border);">
+  <h2 class="font-mono text-sm mb-8" style="color: var(--color-accent);">Projects</h2>
+  <div class="space-y-4">
+    {projects.map(project => (
+      <a
+        href={project.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="block p-5 rounded-lg border transition-colors hover:border-[var(--color-accent)]"
+        style="background-color: var(--color-card); border-color: var(--color-border);"
+      >
+        <p class="font-medium text-sm mb-1.5" style="color: var(--color-text);">{project.name}</p>
+        <p class="text-sm leading-relaxed mb-3" style="color: var(--color-text-muted);">{project.description}</p>
+        <div class="flex flex-wrap gap-1.5">
+          {project.tech.map(tag => (
+            <span class="font-mono text-xs px-2 py-0.5 rounded" style="color: var(--color-accent); background-color: var(--color-bg);">
+              {tag}
+            </span>
+          ))}
+        </div>
+      </a>
+    ))}
+  </div>
+</section>
