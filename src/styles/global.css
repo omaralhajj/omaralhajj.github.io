@@ -25,6 +25,10 @@
   --color-text-muted: #6b7280;
   --color-border: #e5e7eb;
   --color-card: #ffffff;
+
+  /* Layout */
+  --content-width: 42rem;   /* change here to resize all sections at once */
+  --content-px: 1.5rem;
 }
 
 :root.dark {
@@ -45,6 +49,15 @@ body {
   color: var(--color-text);
   font-family: var(--font-sans);
   transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Content column: centered, width-constrained, horizontally padded */
+.col {
+  max-width: var(--content-width);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--content-px);
+  padding-right: var(--content-px);
 }
 
 /* Scroll fade-in animation */
