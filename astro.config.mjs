@@ -9,4 +9,5 @@ export default defineConfig({
     plugins: [tailwindcss()]
   },
   site: "https://alhajj.dev",
+  base: "/"
 });
