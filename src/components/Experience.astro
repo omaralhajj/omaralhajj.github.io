@@ -5,14 +5,19 @@ const experience = [
     company: "Bankdata",
     period: "Jan 2024 — Present",
     description:
-      "Leading the migration from Bitbucket and Jenkins to GitHub, including on-premises GitHub runners on Kubernetes. Driving CI/CD improvements that increase delivery speed, reliability, and developer experience.",
+      "Contributing to migration and platform engineering work across source control, CI/CD, and developer tooling.",
+    highlights: [
+      "Built an agentic AI application that migrates Jenkins pipelines to GitHub Actions workflows using OpenAI models and Semantic Kernel.",
+      "Setup an AI Gateway using agentgateway and implemented authentication with EntraID using OPA Envoy for JWT parsing and claims verification.",
+      "Migrated Bitbucket to GitHub, including on-premises GitHub runners on OpenShift.",
+    ],
   },
   {
     role: "Software Developer",
     company: "Bankdata",
     period: "Nov 2019 — Dec 2023",
     description:
-      "Led a production-critical Artifactory migration from legacy Windows Server infrastructure to a highly available OpenShift setup. Supported the transition from fully on-prem infrastructure to a hybrid private-cloud model and built self-service pipelines for engineering teams.",
+      "Contributed to a production-critical Artifactory migration from legacy Windows Server infrastructure to a highly available OpenShift setup. Supported the transition from fully on-prem infrastructure to a hybrid private-cloud model and built self-service pipelines for engineering teams.",
   },
   {
     role: "Intern, Junior Developer",
@@ -58,6 +63,16 @@ const experience = [
             >
               {item.description}
             </p>
+            {item.highlights && (
+              <ul
+                class="mt-3 space-y-1 text-sm leading-relaxed list-disc pl-5"
+                style="color: var(--color-text-muted);"
+              >
+                {item.highlights.map((highlight) => (
+                  <li>{highlight}</li>
+                ))}
+              </ul>
+            )}
           </div>
         </div>
       ))
