@@ -1,10 +1,11 @@
 ---
 const navLinks = [
-  { label: 'About', href: '#about' },
-  { label: 'Skills', href: '#skills' },
-  { label: 'Experience', href: '#experience' },
-  { label: 'Projects', href: '#projects' },
-  { label: 'Contact', href: '#contact' },
+  { label: 'About', href: '#about', external: false },
+  { label: 'Skills', href: '#skills', external: false },
+  { label: 'Experience', href: '#experience', external: false },
+  { label: 'Projects', href: '#projects', external: false },
+  { label: 'Contact', href: '#contact', external: false },
+  { label: 'Blog', href: '/blog', external: true },
 ]
 ---
 
@@ -18,10 +19,15 @@ const navLinks = [
       {navLinks.map(link => (
         <a
           href={link.href}
-          data-nav={link.href.slice(1)}
-          class="text-xs sm:text-sm header-link"
+          {...(!link.external ? { 'data-nav': link.href.slice(1) } : {})}
+          class="text-xs sm:text-sm header-link inline-flex items-center gap-0.5"
         >
           {link.label}
+          {link.external && (
+            <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.7;">
+              <path d="M7 7h10v10"/><path d="M7 17 17 7"/>
+            </svg>
+          )}
         </a>
       ))}
 
