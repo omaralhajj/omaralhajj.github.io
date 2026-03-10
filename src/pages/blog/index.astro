@@ -1,0 +1,75 @@
+---
+import { getCollection } from 'astro:content'
+import Layout from '../../layouts/Layout.astro'
+import Header from '../../components/Header.astro'
+import Footer from '../../components/Footer.astro'
+
+const posts = (await getCollection('blog', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+
+function formatDate(date: Date) {
+  return date.toLocaleDateString('en-GB', { year: 'numeric', month: 'short', day: 'numeric' })
+}
+---
+
+<Layout title="Blog — Omar Alhajj" description="Writing on software, learning, and building things.">
+  <Header />
+  <main>
+    <section class="col fade-in" style="padding-top: 4rem; padding-bottom: 4rem;">
+      <h1 class="text-2xl font-semibold mb-2" style="color: var(--color-text);">Blog</h1>
+      <p class="mb-10" style="color: var(--color-text-muted);">Writing on software, learning, and building things.</p>
+
+      <ul class="flex flex-col gap-4" style="list-style: none; padding: 0; margin: 0;">
+        {posts.map(post => (
+          <li>
+            <a
+              href={`/blog/${post.slug}`}
+              class="blog-card block p-5 rounded-xl border transition-colors"
+              style="border-color: var(--color-border); background-color: var(--color-card);"
+            >
+              <div class="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1 mb-1">
+                <span class="font-medium" style="color: var(--color-text);">{post.data.title}</span>
+                <span class="text-xs shrink-0" style="color: var(--color-text-muted);">{formatDate(post.data.pubDate)}</span>
+              </div>
+              <p class="text-sm" style="color: var(--color-text-muted);">{post.data.description}</p>
+              {post.data.tags && post.data.tags.length > 0 && (
+                <div class="flex flex-wrap gap-2 mt-3">
+                  {post.data.tags.map(tag => (
+                    <span
+                      class="text-xs px-2 py-0.5 rounded-full border"
+                      style="border-color: var(--color-border); color: var(--color-text-muted);"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  </main>
+  <Footer />
+</Layout>
+
+<style>
+  .blog-card:hover {
+    border-color: var(--color-accent) !important;
+  }
+</style>
+
+<script>
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible')
+          observer.unobserve(entry.target)
+        }
+      })
+    },
+    { threshold: 0.1 }
+  )
+  document.querySelectorAll('.fade-in').forEach((el) => observer.observe(el))
+</script>
