@@ -1,0 +1,483 @@
+---
+// Terminal.astro — interactive developer terminal overlay
+---
+
+<div id="terminal-overlay" aria-hidden="true">
+  <div id="terminal-window" role="dialog" aria-label="Developer terminal">
+    <!-- Title bar / drag handle -->
+    <div id="terminal-titlebar">
+      <div id="terminal-traffic">
+        <button id="terminal-close" aria-label="Close terminal"></button>
+        <button id="terminal-minimize" aria-label="Minimize terminal"></button>
+        <button id="terminal-restore" aria-label="Restore terminal"></button>
+      </div>
+      <span id="terminal-title">terminal</span>
+    </div>
+
+    <!-- Output area -->
+    <div id="terminal-output"></div>
+
+    <!-- Input row -->
+    <div id="terminal-input-row">
+      <span id="terminal-prompt">visitor@alhajj.dev:~$</span>
+      <input
+        id="terminal-input"
+        type="text"
+        autocomplete="off"
+        autocorrect="off"
+        autocapitalize="off"
+        spellcheck="false"
+        aria-label="Terminal input"
+      />
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Overlay — covers viewport, hidden by default */
+  #terminal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    pointer-events: none; /* overlay itself doesn't block clicks */
+  }
+
+  #terminal-overlay.is-open {
+    display: block;
+  }
+
+  /* Terminal window */
+  #terminal-window {
+    position: fixed;
+    width: 600px;
+    height: 360px;
+    background: #1a1a1a;
+    border: 1px solid #262626;
+    border-radius: 8px;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    z-index: 100;
+    pointer-events: all;
+    overflow: hidden;
+
+    /* Open animation default (close overrides inline) */
+    opacity: 0;
+    transform: scale(0.95);
+    transition:
+      opacity 150ms ease-out,
+      transform 150ms ease-out,
+      height 200ms ease-in-out;
+  }
+
+  #terminal-window.is-visible {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  /* Minimized: collapse to title bar height (40px) */
+  #terminal-window.is-minimized {
+    height: 40px;
+  }
+
+  /* Title bar */
+  #terminal-titlebar {
+    height: 40px;
+    min-height: 40px;
+    background: #111111;
+    border-bottom: 1px solid #262626;
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    cursor: grab;
+    user-select: none;
+    flex-shrink: 0;
+  }
+
+  #terminal-titlebar:active {
+    cursor: grabbing;
+  }
+
+  /* Traffic light buttons */
+  #terminal-traffic {
+    display: flex;
+    gap: 6px;
+    margin-right: 12px;
+  }
+
+  #terminal-traffic button {
+    /* 12px visual dot + 5px padding on each side = 22px hit area */
+    width: 12px;
+    height: 12px;
+    padding: 5px;
+    box-sizing: content-box;
+    background-clip: content-box;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    color: transparent;
+    transition: color 0.15s;
+  }
+
+  #terminal-traffic:hover button {
+    color: rgba(0, 0, 0, 0.5);
+  }
+
+  #terminal-close {
+    background: #ff5f57;
+  }
+  #terminal-minimize {
+    background: #febc2e;
+  }
+  #terminal-restore {
+    background: #28c840;
+  }
+
+  #terminal-title {
+    color: #9ca3af;
+    font-size: 12px;
+  }
+
+  /* Output area */
+  #terminal-output {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px 14px 4px;
+    color: #f5f5f5;
+    line-height: 1.6;
+    scrollbar-width: thin;
+    scrollbar-color: #262626 transparent;
+  }
+
+  #terminal-output::-webkit-scrollbar {
+    width: 4px;
+  }
+  #terminal-output::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  #terminal-output::-webkit-scrollbar-thumb {
+    background: #262626;
+    border-radius: 2px;
+  }
+
+  /* Transition on base elements so opacity animates in both directions (minimize + restore) */
+  #terminal-output,
+  #terminal-input-row {
+    transition: opacity 200ms ease-in-out;
+  }
+
+  /* Hide output/input when minimized */
+  #terminal-window.is-minimized #terminal-output,
+  #terminal-window.is-minimized #terminal-input-row {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* Input row */
+  #terminal-input-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px 12px;
+    flex-shrink: 0;
+  }
+
+  #terminal-prompt {
+    color: #6366f1;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  #terminal-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #f5f5f5;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    caret-color: #6366f1;
+  }
+
+  /* Output line types — :global() required because spans are created dynamically in JS
+     and Astro's scoped styles don't apply to elements not present in the template */
+  :global(.t-line) {
+    display: block;
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+  :global(.t-line--prompt) {
+    color: #6366f1;
+  }
+  :global(.t-line--muted) {
+    color: #9ca3af;
+  }
+  :global(.t-line--error) {
+    color: #f87171;
+  }
+  :global(.t-line--link a) {
+    color: #818cf8;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+</style>
+
+<script>
+  import { CommandRegistry } from "../terminal/registry";
+  import { HelpCommand } from "../terminal/commands/HelpCommand";
+  import { WhoamiCommand } from "../terminal/commands/WhoamiCommand";
+  import { ContactCommand } from "../terminal/commands/ContactCommand";
+  import { ThemeCommand } from "../terminal/commands/ThemeCommand";
+  import { ClearCommand } from "../terminal/commands/ClearCommand";
+  import { ExitCommand } from "../terminal/commands/ExitCommand";
+  import { LsCommand } from "../terminal/commands/lsCommand";
+  import { CdCommand } from "../terminal/commands/cdCommand";
+  import { CatCommand } from "../terminal/commands/catCommand";
+  import { VirtualFileTree } from "../terminal/VirtualFileTree";
+  import { buildTree } from "../terminal/tree";
+  import type { TerminalContext } from "../terminal/types";
+
+  // ─── Element refs ──────────────────────────────────────────────────────────
+  const overlay = document.getElementById("terminal-overlay")!;
+  const win = document.getElementById("terminal-window")!;
+  const output = document.getElementById("terminal-output")!;
+  const input = document.getElementById("terminal-input") as HTMLInputElement;
+  const promptEl = document.getElementById("terminal-prompt")!;
+  const btnClose = document.getElementById("terminal-close")!;
+  const btnMinimize = document.getElementById("terminal-minimize")!;
+  const btnRestore = document.getElementById("terminal-restore")!;
+
+  // ─── Virtual filesystem ────────────────────────────────────────────────────
+  const vfs = new VirtualFileTree(buildTree());
+
+  function promptText(): string {
+    return `visitor@alhajj.dev:${vfs.getPath()}$`;
+  }
+
+  function updatePrompt(): void {
+    promptEl.textContent = promptText();
+  }
+
+  // ─── Position helpers (defined before openTerminal, which calls applyPosition)
+  let posLeft = 0;
+  let posTop = 0;
+  let positioned = false;
+
+  function applyPosition() {
+    win.style.left = posLeft + "px";
+    win.style.top = posTop + "px";
+  }
+
+  function clampPosition() {
+    const titleH = 40;
+    posLeft = Math.max(0, Math.min(posLeft, window.innerWidth - 600));
+    posTop = Math.max(0, Math.min(posTop, window.innerHeight - titleH));
+  }
+
+  // ─── State ────────────────────────────────────────────────────────────────
+  type TerminalState = "closed" | "open" | "minimized";
+  let state: TerminalState = "closed";
+
+  // ─── State transitions ─────────────────────────────────────────────────────
+  function openTerminal() {
+    if (!positioned) {
+      posLeft = (window.innerWidth - 600) / 2;
+      posTop = (window.innerHeight - 360) / 2;
+      applyPosition();
+      positioned = true;
+    }
+    overlay.classList.add("is-open");
+    overlay.setAttribute("aria-hidden", "false");
+    // Trigger open animation on next frame (allows display:block to settle first)
+    requestAnimationFrame(() => win.classList.add("is-visible"));
+    win.classList.remove("is-minimized");
+    state = "open";
+    printWelcome();
+    input.focus();
+  }
+
+  function closeTerminal() {
+    // Close uses 100ms ease-in (spec) — override the default 150ms ease-out
+    win.style.transition =
+      "opacity 100ms ease-in, transform 100ms ease-in, height 200ms ease-in-out";
+    win.classList.remove("is-visible");
+    setTimeout(() => {
+      overlay.classList.remove("is-open");
+      overlay.setAttribute("aria-hidden", "true");
+      win.classList.remove("is-minimized");
+      win.style.transition = ""; // restore CSS default for next open
+    }, 100);
+    state = "closed";
+    clearOutput();
+  }
+
+  function minimizeTerminal() {
+    win.classList.add("is-minimized");
+    state = "minimized";
+  }
+
+  function restoreTerminal() {
+    win.classList.remove("is-minimized");
+    state = "open";
+    input.focus();
+  }
+
+  // ─── Button handlers ───────────────────────────────────────────────────────
+  btnClose.addEventListener("click", closeTerminal);
+  btnMinimize.addEventListener("click", () => {
+    if (state === "open") minimizeTerminal();
+  });
+  btnRestore.addEventListener("click", () => {
+    if (state === "minimized") restoreTerminal();
+  });
+
+  // ─── Keep input focused when clicking anywhere inside the terminal ────────
+  win.addEventListener("mousedown", (e) => {
+    if (e.target !== input) {
+      e.preventDefault();
+      input.focus();
+    }
+  });
+
+  // ─── Keyboard shortcut: Ctrl+` ────────────────────────────────────────────
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "k" && e.ctrlKey) {
+      e.preventDefault();
+      // Guard: don't close while the user is typing in the input
+      if (document.activeElement === input) return;
+      if (state === "closed") openTerminal();
+      else if (state === "open") closeTerminal();
+      else if (state === "minimized") restoreTerminal();
+    }
+  });
+
+  // ─── Autocomplete ──────────────────────────────────────────────────────────
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "tab") {
+      e.preventDefault();
+    }
+  });
+
+  // ─── Output helpers ────────────────────────────────────────────────────────
+  function printLine(text: string, cls = "") {
+    const span = document.createElement("span");
+    span.className = `t-line${cls ? " " + cls : ""}`;
+    span.textContent = text;
+    output.appendChild(span);
+    output.scrollTop = output.scrollHeight;
+  }
+
+  function printHTML(html: string, cls = "") {
+    const span = document.createElement("span");
+    span.className = `t-line${cls ? " " + cls : ""}`;
+    span.innerHTML = html;
+    output.appendChild(span);
+    output.scrollTop = output.scrollHeight;
+  }
+
+  function clearOutput() {
+    output.innerHTML = "";
+  }
+
+  function printWelcome() {
+    clearOutput();
+    printLine("Welcome. Type 'help' to get started.", "t-line--muted");
+    printLine("");
+  }
+
+  // ─── Drag event listeners ──────────────────────────────────────────────────
+  const titlebar = document.getElementById("terminal-titlebar")!;
+  let dragging = false;
+  let dragStartX = 0;
+  let dragStartY = 0;
+  let dragStartLeft = 0;
+  let dragStartTop = 0;
+
+  titlebar.addEventListener("mousedown", (e) => {
+    // Don't start drag on traffic light button clicks
+    if ((e.target as HTMLElement).closest("#terminal-traffic")) return;
+    dragging = true;
+    dragStartX = e.clientX;
+    dragStartY = e.clientY;
+    dragStartLeft = posLeft;
+    dragStartTop = posTop;
+    document.body.style.userSelect = "none";
+  });
+
+  document.addEventListener("mousemove", (e) => {
+    if (!dragging) return;
+    posLeft = dragStartLeft + (e.clientX - dragStartX);
+    posTop = dragStartTop + (e.clientY - dragStartY);
+    clampPosition();
+    applyPosition();
+  });
+
+  document.addEventListener("mouseup", () => {
+    if (!dragging) return;
+    dragging = false;
+    document.body.style.userSelect = "";
+  });
+
+  // ─── Command registry ──────────────────────────────────────────────────────
+  const registry = new CommandRegistry([
+    new HelpCommand(),
+    new WhoamiCommand(),
+    new ContactCommand(),
+    new ThemeCommand(),
+    new ClearCommand(),
+    new ExitCommand(),
+    new LsCommand(),
+    new CdCommand(),
+    new CatCommand(),
+  ]);
+
+  const ctx: TerminalContext = {
+    print: printLine,
+    printHTML,
+    clear: clearOutput,
+    close: closeTerminal,
+    commands: registry.getAll(),
+    vfs,
+  };
+
+  // ─── Command history ───────────────────────────────────────────────────────
+  const cmdHistory: string[] = [];
+  let historyIndex = -1;
+
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      const raw = input.value.trim();
+      input.value = "";
+      historyIndex = -1;
+      if (!raw) return;
+      cmdHistory.unshift(raw);
+      printLine(`${promptText()} ${raw}`, "t-line--prompt");
+      registry.run(raw.toLowerCase(), ctx);
+      updatePrompt();
+      return;
+    }
+
+    if (e.key === "ArrowUp") {
+      e.preventDefault();
+      if (historyIndex < cmdHistory.length - 1) {
+        historyIndex++;
+        input.value = cmdHistory[historyIndex];
+      }
+      return;
+    }
+
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      if (historyIndex > 0) {
+        historyIndex--;
+        input.value = cmdHistory[historyIndex];
+      } else {
+        historyIndex = -1;
+        input.value = "";
+      }
+    }
+  });
+</script>
