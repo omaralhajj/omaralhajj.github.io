@@ -354,12 +354,65 @@
     }
   });
 
-  // ─── Autocomplete ──────────────────────────────────────────────────────────
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "tab") {
-      e.preventDefault();
+  // ─── Tab completion ────────────────────────────────────────────────────────
+  function tabComplete(currentInput: string, isDoubleTap: boolean): void {
+    const hasSpace = currentInput.includes(" ");
+    let prefix: string;
+    let partial: string;
+    let completions: string[];
+
+    if (!hasSpace) {
+      prefix = "";
+      partial = currentInput;
+      completions = Array.from(registry.getAll().keys())
+        .sort()
+        .filter((c) => c.startsWith(partial));
+    } else {
+      const firstSpaceIdx = currentInput.indexOf(" ");
+      const cmd = currentInput.slice(0, firstSpaceIdx).toLowerCase();
+      const afterCmd = currentInput.slice(firstSpaceIdx + 1);
+      const lastSpaceIdx = afterCmd.lastIndexOf(" ");
+      const argBase = lastSpaceIdx === -1 ? "" : afterCmd.slice(0, lastSpaceIdx + 1);
+      partial = lastSpaceIdx === -1 ? afterCmd : afterCmd.slice(lastSpaceIdx + 1);
+      prefix = currentInput.slice(0, firstSpaceIdx + 1) + argBase;
+
+      const specials: string[] = [];
+      if (cmd === "cd") {
+        if ("..".startsWith(partial)) specials.push("..");
+        if ("~".startsWith(partial)) specials.push("~");
+      }
+
+      let children = vfs.current.children.filter((c) => c.name.startsWith(partial));
+      if (cmd === "cd") {
+        children = children.filter((c) => c.type === "directory");
+      }
+
+      completions = [
+        ...specials,
+        ...children.map((c) => c.name + (c.type === "directory" ? "/" : "")),
+      ];
     }
-  });
+
+    if (completions.length === 0) return;
+
+    if (completions.length === 1) {
+      input.value = prefix + completions[0];
+      if (!hasSpace) input.value += " ";
+    } else {
+      const commonPrefix = completions.reduce((acc, c) => {
+        let i = 0;
+        while (i < acc.length && i < c.length && acc[i] === c[i]) i++;
+        return acc.slice(0, i);
+      });
+
+      if (commonPrefix.length > partial.length && !isDoubleTap) {
+        input.value = prefix + commonPrefix;
+      } else {
+        printLine(`${promptText()} ${currentInput}`, "t-line--prompt");
+        printLine(completions.join("  "), "t-line--muted");
+      }
+    }
+  }
 
   // ─── Output helpers ────────────────────────────────────────────────────────
   function printLine(text: string, cls = "") {
@@ -446,8 +499,18 @@
   // ─── Command history ───────────────────────────────────────────────────────
   const cmdHistory: string[] = [];
   let historyIndex = -1;
+  let lastKeyWasTab = false;
 
   input.addEventListener("keydown", (e) => {
+    if (e.key === "Tab") {
+      e.preventDefault();
+      tabComplete(input.value, lastKeyWasTab);
+      lastKeyWasTab = true;
+      return;
+    }
+
+    lastKeyWasTab = false;
+
     if (e.key === "Enter") {
       const raw = input.value.trim();
       input.value = "";
