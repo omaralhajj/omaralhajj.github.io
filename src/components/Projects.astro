@@ -28,25 +28,27 @@ const projects = [
   class="col py-12 sm:py-16 border-t fade-in"
   style="border-color: var(--color-border);"
 >
-  <h2 class="font-mono text-sm mb-8" style="color: var(--color-accent);">
+  <h2 class="font-mono text-sm mb-8" style="color: var(--color-accent);" data-i18n="projects_heading">
     Projects
   </h2>
   <div class="space-y-4">
     {
-      projects.map((project) => (
+      projects.map((project, index) => (
         <article
-          class="block p-5 rounded-lg border transition-colors hover:border-[var(--color-accent)]"
-          style="background-color: var(--color-card); border-color: var(--color-border);"
+          class="spotlight-card block p-5 rounded-lg border"
+          style="background-color: var(--color-card);"
         >
           <p
             class="font-medium text-sm mb-1.5"
             style="color: var(--color-text);"
+            data-i18n={`project_${index}_name`}
           >
             {project.name}
           </p>
           <p
             class="text-sm leading-relaxed mb-3"
             style="color: var(--color-text-muted);"
+            data-i18n={`project_${index}_description`}
           >
             {project.description}
           </p>
@@ -57,6 +59,7 @@ const projects = [
               rel="noopener noreferrer"
               class="inline-block text-sm mb-3 underline underline-offset-2 transition-colors hover:text-[var(--color-accent)]"
               style="color: var(--color-text);"
+              data-i18n={`project_${index}_devblog`}
             >
               Read devblog
             </a>
@@ -76,3 +79,72 @@ const projects = [
     }
   </div>
 </section>
+
+<style>
+  .spotlight-card {
+    position: relative;
+    overflow: hidden;
+    border-color: var(--color-border);
+    transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+  }
+
+  .spotlight-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      350px circle at var(--mx, 50%) var(--my, 50%),
+      rgba(99, 102, 241, 0.12),
+      transparent 70%
+    );
+    opacity: 0;
+    transition: opacity 0.2s;
+    pointer-events: none;
+  }
+
+  .spotlight-card:hover::before {
+    opacity: 1;
+  }
+
+  .spotlight-card:hover {
+    border-color: var(--color-accent);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 30px rgba(99, 102, 241, 0.15);
+  }
+</style>
+
+<script>
+  function initSpotlight() {
+    const cards = document.querySelectorAll<HTMLElement>("#projects .spotlight-card");
+
+    const handlers: Array<{ card: HTMLElement; move: (e: MouseEvent) => void; leave: () => void }> = [];
+
+    cards.forEach((card) => {
+      const move = (e: MouseEvent) => {
+        const rect = card.getBoundingClientRect();
+        card.style.setProperty("--mx", `${e.clientX - rect.left}px`);
+        card.style.setProperty("--my", `${e.clientY - rect.top}px`);
+      };
+      const leave = () => {
+        card.style.removeProperty("--mx");
+        card.style.removeProperty("--my");
+      };
+      card.addEventListener("mousemove", move);
+      card.addEventListener("mouseleave", leave);
+      handlers.push({ card, move, leave });
+    });
+
+    document.addEventListener(
+      "astro:before-swap",
+      () => {
+        handlers.forEach(({ card, move, leave }) => {
+          card.removeEventListener("mousemove", move);
+          card.removeEventListener("mouseleave", leave);
+        });
+      },
+      { once: true }
+    );
+  }
+
+  initSpotlight();
+</script>

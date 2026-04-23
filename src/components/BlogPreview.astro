@@ -10,22 +10,23 @@ function formatDate(date: Date) {
 }
 ---
 
-<section id="blog" class="col fade-in" style="padding-top: 4rem; padding-bottom: 4rem;">
+<section id="blog" class="col fade-in xl:hidden" style="padding-top: 4rem; padding-bottom: 4rem;">
   <div class="flex items-baseline justify-between mb-8">
-    <h2 class="text-xl font-semibold" style="color: var(--color-text);">Recent Posts</h2>
+    <h2 class="text-xl font-semibold" style="color: var(--color-text);" data-i18n="blog_heading">Recent Posts</h2>
     <a
       href="/blog"
       class="text-sm transition-colors"
       style="color: var(--color-text-muted);"
       onmouseover="this.style.color='var(--color-accent)'"
       onmouseout="this.style.color='var(--color-text-muted)'"
+      data-i18n="blog_view_all"
     >
       View all →
     </a>
   </div>
 
   {posts.length === 0 ? (
-    <p style="color: var(--color-text-muted);">No posts yet. Check back soon.</p>
+    <p style="color: var(--color-text-muted);" data-i18n="blog_empty">No posts yet. Check back soon.</p>
   ) : (
     <ul class="flex flex-col gap-4" style="list-style: none; padding: 0; margin: 0;">
       {posts.map(post => (

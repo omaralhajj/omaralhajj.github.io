@@ -34,12 +34,12 @@ const experience = [
   class="col py-12 sm:py-16 border-t fade-in"
   style="border-color: var(--color-border);"
 >
-  <h2 class="font-mono text-sm mb-8" style="color: var(--color-accent);">
+  <h2 class="font-mono text-sm mb-8" style="color: var(--color-accent);" data-i18n="experience_heading">
     Experience
   </h2>
   <div class="space-y-10">
     {
-      experience.map((item) => (
+      experience.map((item, index) => (
         <div class="experience-item grid gap-2 sm:grid-cols-[140px_1fr] sm:gap-6">
           <p
             class="font-mono text-xs pt-1"
@@ -51,6 +51,7 @@ const experience = [
             <p
               class="font-medium text-sm mb-0.5"
               style="color: var(--color-text);"
+              data-i18n={`experience_${index}_role`}
             >
               {item.role}
             </p>
@@ -60,6 +61,7 @@ const experience = [
             <p
               class="text-sm leading-relaxed"
               style="color: var(--color-text-muted);"
+              data-i18n={`experience_${index}_description`}
             >
               {item.description}
             </p>
@@ -68,8 +70,8 @@ const experience = [
                 class="mt-3 space-y-1 text-sm leading-relaxed list-disc pl-5"
                 style="color: var(--color-text-muted);"
               >
-                {item.highlights.map((highlight) => (
-                  <li>{highlight}</li>
+                {item.highlights.map((highlight, hIndex) => (
+                  <li data-i18n={`experience_${index}_highlight_${hIndex}`}>{highlight}</li>
                 ))}
               </ul>
             )}

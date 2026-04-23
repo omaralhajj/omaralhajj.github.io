@@ -376,13 +376,15 @@
       partial = lastSpaceIdx === -1 ? afterCmd : afterCmd.slice(lastSpaceIdx + 1);
       prefix = currentInput.slice(0, firstSpaceIdx + 1) + argBase;
 
+      const partialClean = partial.replace(/\/+$/, "");
+
       const specials: string[] = [];
       if (cmd === "cd") {
-        if ("..".startsWith(partial)) specials.push("..");
-        if ("~".startsWith(partial)) specials.push("~");
+        if ("..".startsWith(partialClean)) specials.push("..");
+        if ("~".startsWith(partialClean)) specials.push("~");
       }
 
-      let children = vfs.current.children.filter((c) => c.name.startsWith(partial));
+      let children = vfs.current.children.filter((c) => c.name.startsWith(partialClean));
       if (cmd === "cd") {
         children = children.filter((c) => c.type === "directory");
       }
@@ -405,7 +407,7 @@
         return acc.slice(0, i);
       });
 
-      if (commonPrefix.length > partial.length && !isDoubleTap) {
+      if (commonPrefix.length > partialClean.length && !isDoubleTap) {
         input.value = prefix + commonPrefix;
       } else {
         printLine(`${promptText()} ${currentInput}`, "t-line--prompt");

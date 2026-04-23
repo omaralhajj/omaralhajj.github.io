@@ -7,21 +7,25 @@ import Skills from '../components/Skills.astro'
 import Experience from '../components/Experience.astro'
 import Projects from '../components/Projects.astro'
 import BlogPreview from '../components/BlogPreview.astro'
+import BlogSidebar from '../components/BlogSidebar.astro'
 import Contact from '../components/Contact.astro'
 import Footer from '../components/Footer.astro'
 ---
 
 <Layout>
   <Header />
-  <main>
-    <Hero />
-    <About />
-    <Skills />
-    <Experience />
-    <Projects />
-    <BlogPreview />
-    <Contact />
-  </main>
+  <div class="xl:max-w-[76rem] xl:mx-auto xl:flex xl:items-start xl:gap-10">
+    <main class="xl:flex-1 xl:min-w-0">
+      <Hero />
+      <About />
+      <Skills />
+      <Experience />
+      <Projects />
+      <BlogPreview />
+      <Contact />
+    </main>
+    <BlogSidebar />
+  </div>
   <Footer />
 </Layout>
 

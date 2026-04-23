@@ -2,14 +2,17 @@
 const skillGroups = [
   {
     name: "Frontend",
+    i18nKey: null,
     skills: ["Angular", "TypeScript", "JavaScript", "HTML", "CSS"],
   },
   {
     name: "Backend",
+    i18nKey: null,
     skills: ["Java", "Kotlin", "Python", "Maven", "Gradle", "NPM"],
   },
   {
     name: "Platform",
+    i18nKey: null,
     skills: [
       "Docker",
       "Helm",
@@ -23,14 +26,17 @@ const skillGroups = [
   },
   {
     name: "AI",
+    i18nKey: null,
     skills: ["Microsoft Agent Framework", "LangChain"],
   },
   {
     name: "Other",
+    i18nKey: null,
     skills: ["GitHub Actions", "Jenkins"],
   },
   {
     name: "Spoken languages",
+    i18nKey: "skills_group_spoken",
     skills: ["Danish", "English", "Arabic"],
   },
 ];
@@ -50,19 +56,20 @@ const groupedSkillsWithDelay = skillGroups.map((group) => ({
   class="col py-12 sm:py-16 border-t fade-in"
   style="border-color: var(--color-border);"
 >
-  <h2 class="font-mono text-sm mb-6" style="color: var(--color-accent);">
+  <h2 class="font-mono text-sm mb-6" style="color: var(--color-accent);" data-i18n="skills_heading">
     Skills
   </h2>
   <div class="grid gap-4 sm:gap-5 sm:grid-cols-2">
     {
       groupedSkillsWithDelay.map((group) => (
         <article
-          class="rounded-lg border p-4 sm:p-5"
-          style="border-color: var(--color-border); background-color: var(--color-card);"
+          class="spotlight-card rounded-lg border p-4 sm:p-5"
+          style="background-color: var(--color-card);"
         >
           <h3
             class="font-mono text-xs uppercase tracking-wider mb-3"
             style="color: var(--color-accent);"
+            {...(group.i18nKey ? { 'data-i18n': group.i18nKey } : {})}
           >
             {group.name}
           </h3>
@@ -82,3 +89,83 @@ const groupedSkillsWithDelay = skillGroups.map((group) => ({
     }
   </div>
 </section>
+
+<style>
+  .spotlight-card {
+    position: relative;
+    overflow: hidden;
+    border-color: var(--color-border);
+    transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+  }
+
+  .spotlight-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      350px circle at var(--mx, 50%) var(--my, 50%),
+      rgba(99, 102, 241, 0.12),
+      transparent 70%
+    );
+    opacity: 0;
+    transition: opacity 0.2s;
+    pointer-events: none;
+  }
+
+  .spotlight-card:hover::before {
+    opacity: 1;
+  }
+
+  .spotlight-card:hover {
+    border-color: var(--color-accent);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 30px rgba(99, 102, 241, 0.15);
+  }
+
+  .skill-tag {
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  }
+
+  .skill-tag:hover {
+    transform: scale(1.05);
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+    color: var(--color-accent);
+  }
+</style>
+
+<script>
+  function initSpotlight() {
+    const cards = document.querySelectorAll<HTMLElement>("#skills .spotlight-card");
+
+    const handlers: Array<{ card: HTMLElement; move: (e: MouseEvent) => void; leave: () => void }> = [];
+
+    cards.forEach((card) => {
+      const move = (e: MouseEvent) => {
+        const rect = card.getBoundingClientRect();
+        card.style.setProperty("--mx", `${e.clientX - rect.left}px`);
+        card.style.setProperty("--my", `${e.clientY - rect.top}px`);
+      };
+      const leave = () => {
+        card.style.removeProperty("--mx");
+        card.style.removeProperty("--my");
+      };
+      card.addEventListener("mousemove", move);
+      card.addEventListener("mouseleave", leave);
+      handlers.push({ card, move, leave });
+    });
+
+    document.addEventListener(
+      "astro:before-swap",
+      () => {
+        handlers.forEach(({ card, move, leave }) => {
+          card.removeEventListener("mousemove", move);
+          card.removeEventListener("mouseleave", leave);
+        });
+      },
+      { once: true }
+    );
+  }
+
+  initSpotlight();
+</script>

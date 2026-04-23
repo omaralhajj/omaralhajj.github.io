@@ -6,7 +6,7 @@ export class CdCommand extends Command {
     readonly description = "Change directory";
 
     execute(args: string[], ctx: TerminalContext): void {
-        const target = args[0] ?? "";
+        const target = (args[0] ?? "").replace(/\/+$/, "");
 
         if (target === "" || target === "~") {
             ctx.vfs.current = ctx.vfs.root;
