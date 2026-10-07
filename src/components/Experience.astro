@@ -1,30 +1,31 @@
 ---
+import { en as t } from '../i18n'
+
 const experience = [
   {
-    role: "Senior Platform Engineer, Engineering PO",
+    role: t.experience_0_role,
     company: "Bankdata",
     period: "Jan 2024 — Present",
-    description:
-      "Contributing to migration and platform engineering work across source control, CI/CD, and developer tooling. Part time product owner as well.",
+    description: t.experience_0_description,
     highlights: [
-      "Built an agentic AI application that migrates Jenkins pipelines to GitHub Actions workflows using OpenAI models and Semantic Kernel.",
-      "Setup an AI Gateway using agentgateway and implemented authentication with EntraID using OPA Envoy for JWT parsing and claims verification.",
-      "Migrated Bitbucket to GitHub, including on-premises GitHub runners on OpenShift.",
+      t.experience_0_highlight_0,
+      t.experience_0_highlight_1,
+      t.experience_0_highlight_2,
+      t.experience_0_highlight_3,
+      t.experience_0_highlight_4,
     ],
   },
   {
-    role: "Software Developer",
+    role: t.experience_1_role,
     company: "Bankdata",
     period: "Nov 2019 — Dec 2023",
-    description:
-      "Contributed to a production-critical Artifactory migration from legacy Windows Server infrastructure to a highly available OpenShift setup. Supported the transition from fully on-prem infrastructure to a hybrid private-cloud model and built self-service pipelines for engineering teams.",
+    description: t.experience_1_description,
   },
   {
-    role: "Intern, Junior Developer",
+    role: t.experience_2_role,
     company: "EG Silkeborg Data",
     period: "Feb 2018 — Jan 2019",
-    description:
-      "Developed and maintained frontend features for an enterprise payroll platform using Angular, TypeScript, HTML, and CSS.",
+    description: t.experience_2_description,
   },
 ];
 ---
@@ -34,8 +35,12 @@ const experience = [
   class="col py-12 sm:py-16 border-t fade-in"
   style="border-color: var(--color-border);"
 >
-  <h2 class="font-mono text-sm mb-8" style="color: var(--color-accent);" data-i18n="experience_heading">
-    Experience
+  <h2
+    class="font-mono text-sm mb-8"
+    style="color: var(--color-accent);"
+    data-i18n="experience_heading"
+  >
+    {t.experience_heading}
   </h2>
   <div class="space-y-10">
     {
@@ -71,7 +76,9 @@ const experience = [
                 style="color: var(--color-text-muted);"
               >
                 {item.highlights.map((highlight, hIndex) => (
-                  <li data-i18n={`experience_${index}_highlight_${hIndex}`}>{highlight}</li>
+                  <li data-i18n={`experience_${index}_highlight_${hIndex}`}>
+                    {highlight}
+                  </li>
                 ))}
               </ul>
             )}

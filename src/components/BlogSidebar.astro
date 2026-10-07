@@ -1,5 +1,6 @@
 ---
 import { getCollection } from 'astro:content'
+import { en as t } from '../i18n'
 
 const posts = (await getCollection('blog', ({ data }) => !data.draft))
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
@@ -12,7 +13,7 @@ function formatDate(date: Date) {
 
 <aside class="hidden xl:flex xl:flex-col xl:w-56 xl:shrink-0 xl:sticky xl:top-20 xl:pt-20 xl:pb-12 fade-in">
   <div class="flex items-baseline justify-between mb-4">
-    <h2 class="font-mono text-sm" style="color: var(--color-accent);" data-i18n="blog_heading">Recent Posts</h2>
+    <h2 class="font-mono text-sm" style="color: var(--color-accent);" data-i18n="blog_heading">{t.blog_heading}</h2>
     <a
       href="/blog"
       class="text-xs transition-colors"
@@ -21,12 +22,12 @@ function formatDate(date: Date) {
       onmouseout="this.style.color='var(--color-text-muted)'"
       data-i18n="blog_view_all"
     >
-      View all →
+      {t.blog_view_all}
     </a>
   </div>
 
   {posts.length === 0 ? (
-    <p class="text-xs" style="color: var(--color-text-muted);" data-i18n="blog_empty">No posts yet.</p>
+    <p class="text-xs" style="color: var(--color-text-muted);" data-i18n="blog_empty">{t.blog_empty}</p>
   ) : (
     <ul class="flex flex-col gap-2" style="list-style: none; padding: 0; margin: 0;">
       {posts.map(post => (

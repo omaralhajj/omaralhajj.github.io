@@ -5,7 +5,7 @@ export class ContactCommand extends Command {
   readonly description = "Get my contact info and links";
 
   execute(_args: string[], ctx: TerminalContext): void {
-    ctx.print("Email      omar@alhajj.dev");
+    ctx.print("Email      contact@alhajj.dev");
     ctx.printHTML(
       'GitHub     <a href="https://github.com/omaralhajj" target="_blank" rel="noopener noreferrer">github.com/omaralhajj</a>',
       "t-line--link",

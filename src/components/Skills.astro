@@ -1,5 +1,17 @@
 ---
+import { en as t } from "../i18n";
+
 const skillGroups = [
+  {
+    name: "Platform",
+    i18nKey: null,
+    skills: ["Docker", "Helm", "Kubernetes", "Linux", "Terraform"],
+  },
+  {
+    name: "AI",
+    i18nKey: null,
+    skills: ["Microsoft Agent Framework", "LangChain", "Azure Foundry"],
+  },
   {
     name: "Frontend",
     i18nKey: null,
@@ -11,31 +23,12 @@ const skillGroups = [
     skills: ["Java", "Kotlin", "Python", "Maven", "Gradle", "NPM"],
   },
   {
-    name: "Platform",
-    i18nKey: null,
-    skills: [
-      "Docker",
-      "Helm",
-      "Kubernetes",
-      "Linux",
-      "Git",
-      "Bash",
-      "PowerShell",
-      "Terraform",
-    ],
-  },
-  {
-    name: "AI",
-    i18nKey: null,
-    skills: ["Microsoft Agent Framework", "LangChain"],
-  },
-  {
     name: "Other",
     i18nKey: null,
-    skills: ["GitHub Actions", "Jenkins"],
+    skills: ["GitHub Actions", "Jenkins", "Git", "Bash", "PowerShell"],
   },
   {
-    name: "Spoken languages",
+    name: t.skills_group_spoken,
     i18nKey: "skills_group_spoken",
     skills: ["Danish", "English", "Arabic"],
   },
@@ -56,8 +49,12 @@ const groupedSkillsWithDelay = skillGroups.map((group) => ({
   class="col py-12 sm:py-16 border-t fade-in"
   style="border-color: var(--color-border);"
 >
-  <h2 class="font-mono text-sm mb-6" style="color: var(--color-accent);" data-i18n="skills_heading">
-    Skills
+  <h2
+    class="font-mono text-sm mb-6"
+    style="color: var(--color-accent);"
+    data-i18n="skills_heading"
+  >
+    {t.skills_heading}
   </h2>
   <div class="grid gap-4 sm:gap-5 sm:grid-cols-2">
     {
@@ -69,7 +66,7 @@ const groupedSkillsWithDelay = skillGroups.map((group) => ({
           <h3
             class="font-mono text-xs uppercase tracking-wider mb-3"
             style="color: var(--color-accent);"
-            {...(group.i18nKey ? { 'data-i18n': group.i18nKey } : {})}
+            {...(group.i18nKey ? { "data-i18n": group.i18nKey } : {})}
           >
             {group.name}
           </h3>
@@ -95,7 +92,10 @@ const groupedSkillsWithDelay = skillGroups.map((group) => ({
     position: relative;
     overflow: hidden;
     border-color: var(--color-border);
-    transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+    transition:
+      border-color 0.2s,
+      transform 0.2s,
+      box-shadow 0.2s;
   }
 
   .spotlight-card::before {
@@ -123,7 +123,11 @@ const groupedSkillsWithDelay = skillGroups.map((group) => ({
   }
 
   .skill-tag {
-    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+    transition:
+      transform 0.15s ease,
+      box-shadow 0.15s ease,
+      border-color 0.15s ease,
+      color 0.15s ease;
   }
 
   .skill-tag:hover {
@@ -136,9 +140,15 @@ const groupedSkillsWithDelay = skillGroups.map((group) => ({
 
 <script>
   function initSpotlight() {
-    const cards = document.querySelectorAll<HTMLElement>("#skills .spotlight-card");
+    const cards = document.querySelectorAll<HTMLElement>(
+      "#skills .spotlight-card",
+    );
 
-    const handlers: Array<{ card: HTMLElement; move: (e: MouseEvent) => void; leave: () => void }> = [];
+    const handlers: Array<{
+      card: HTMLElement;
+      move: (e: MouseEvent) => void;
+      leave: () => void;
+    }> = [];
 
     cards.forEach((card) => {
       const move = (e: MouseEvent) => {
@@ -163,7 +173,7 @@ const groupedSkillsWithDelay = skillGroups.map((group) => ({
           card.removeEventListener("mouseleave", leave);
         });
       },
-      { once: true }
+      { once: true },
     );
   }
 
