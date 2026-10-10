@@ -23,7 +23,7 @@ const en = {
   experience_0_description: 'Contributing to AI enablement and platform engineering work across source control, CI/CD, and developer tooling. Part time product owner as well.',
   experience_0_highlight_0: 'Built an agentic AI application that migrates Jenkins pipelines to GitHub Actions, enabling an in-house migration of several thousand pipelines instead of external consulting quoted at DKK 1–10M.',
   experience_0_highlight_1: 'Set up AI and MCP gateways using agentgateway, with Entra ID token validation and claims-based policy via OPA and Envoy.',
-  experience_0_highlight_2: 'Led the migration of 12,000 repositories from Bitbucket to GitHub, including on-premises GitHub runners on OpenShift.',
+  experience_0_highlight_2: 'Led the migration of thousands of repositories from Bitbucket to GitHub, including on-premises GitHub runners on OpenShift.',
   experience_0_highlight_3: 'Own GitHub Copilot and Artifactory for the organization: Copilot governance, inference-as-a-service, and a centralized agent plugin marketplace with built-in security scanning.',
   experience_0_highlight_4: 'Coordinated with external partners to drive POCs and introduce new AI and security scanning tools across the platform.',
   experience_1_role: 'Software Developer',

@@ -25,7 +25,7 @@ const da: Record<TranslationKeys, string> = {
   experience_0_description: 'Bidrager til AI-implementering og platformudviklingsopgaver inden for kildekodekontrol, CI/CD og udviklerværktøjer. Deltids Product Owner.',
   experience_0_highlight_0: 'Byggede en agentisk AI-applikation, der migrerer Jenkins-pipelines til GitHub Actions, så flere tusinde pipelines kan migreres internt i stedet for via eksternt konsulentarbejde estimeret til 1–10 mio. kr.',
   experience_0_highlight_1: 'Opsatte AI- og MCP-gateways med agentgateway, med validering af Entra ID-tokens og claims-baserede politikker via OPA og Envoy.',
-  experience_0_highlight_2: 'Ledte migreringen af 12.000 repositories fra Bitbucket til GitHub, inklusiv on-premises GitHub-runners på OpenShift.',
+  experience_0_highlight_2: 'Ledte migreringen af flere tusinde repositories fra Bitbucket til GitHub, inklusiv on-premises GitHub-runners på OpenShift.',
   experience_0_highlight_3: 'Ejer GitHub Copilot og Artifactory for organisationen: Copilot-governance, inference-as-a-service og et centraliseret plugin-marketplace til agenter med indbygget sikkerhedsscanning.',
   experience_0_highlight_4: 'Koordinerede med eksterne partnere om at drive POC\'er og introducere nye AI- og sikkerhedsscanningsværktøjer på tværs af platformen.',
   experience_1_role: 'Softwareudvikler',
