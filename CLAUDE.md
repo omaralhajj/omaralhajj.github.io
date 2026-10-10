@@ -80,7 +80,8 @@ Posts live in `src/content/blog/` as `.mdx` files. The collection schema is in `
 {
   title: string
   description: string
-  date: Date
+  pubDate: Date
+  tags?: string[]
   draft?: boolean   // default false — draft posts are excluded from listings
 }
 ```
