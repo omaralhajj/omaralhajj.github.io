@@ -37,8 +37,9 @@ const en = {
   project_0_devblog: 'Read devblog',
   project_1_name: 'Personal NAS and Homelab Setup',
   project_1_description: 'Built and maintained a personal NAS environment across custom hardware and Mac Mini systems for reliable storage, backup automation, and experimentation.',
-  project_2_name: 'iOS App Learning Track',
-  project_2_description: 'Ongoing personal project focused on Swift and iOS frameworks, with emphasis on creating practical and user-friendly mobile experiences.',
+  project_2_name: 'Governed AI Platform — Open Reference Implementation',
+  project_2_description: 'An in-progress open series on running AI safely in an organization: Copilot governance, a central agent plugin marketplace, agent package management, MCP and AI gateways, and sandboxing — each step shipped as a runnable repo with a write-up.',
+  project_2_link: 'Follow on GitHub',
   // Blog preview
   blog_heading: 'Recent Posts',
   blog_view_all: 'View all →',

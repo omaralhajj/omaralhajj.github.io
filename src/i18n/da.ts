@@ -39,8 +39,9 @@ const da: Record<TranslationKeys, string> = {
   project_0_devblog: 'Læs devblog',
   project_1_name: 'Personlig NAS og Homelab-opsætning',
   project_1_description: 'Byggede og vedligeholdt et personligt NAS-miljø på tværs af tilpasset hardware og Mac Mini-systemer til pålidelig lagring, backup-automatisering og eksperimenter.',
-  project_2_name: 'iOS App-læringsforløb',
-  project_2_description: 'Løbende personligt projekt med fokus på Swift og iOS-frameworks, med vægt på at skabe praktiske og brugervenlige mobiloplevelser.',
+  project_2_name: 'Governed AI Platform — Åben referenceimplementering',
+  project_2_description: 'En igangværende åben serie om at køre AI sikkert i en organisation: Copilot-governance, en central plugin-markedsplads til agenter, pakkehåndtering af agenter, MCP- og AI-gateways samt sandboxing — hvert trin udgives som et kørbart repo med en tilhørende gennemgang.',
+  project_2_link: 'Følg på GitHub',
   // Blog preview
   blog_heading: 'Seneste indlæg',
   blog_view_all: 'Se alle →',

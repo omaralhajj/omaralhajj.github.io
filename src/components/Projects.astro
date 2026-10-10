@@ -1,14 +1,23 @@
 ---
 import { en as t } from '../i18n'
+import type { TranslationKeys } from '../i18n/en'
 
-const projects = [
+type Project = {
+  name: string
+  description: string
+  tech: string[]
+  link?: string
+  linkKey?: TranslationKeys
+}
+
+const projects: Project[] = [
   {
     name: t.project_0_name,
     description: t.project_0_description,
     tech: ["AI", "Semantic Kernel", "Python", "OpenAI"],
-    devblog:
+    link:
       "https://devblogs.microsoft.com/all-things-azure/how-we-use-ai-agents-for-cobol-migration-and-mainframe-modernization/",
-    devblogLabel: t.project_0_devblog,
+    linkKey: "project_0_devblog",
   },
   {
     name: t.project_1_name,
@@ -18,7 +27,9 @@ const projects = [
   {
     name: t.project_2_name,
     description: t.project_2_description,
-    tech: ["Swift", "iOS", "Mobile UX"],
+    tech: ["GitHub Copilot", "MCP", "agentgateway", "OPA"],
+    link: "https://github.com/alhajj-dev",
+    linkKey: "project_2_link",
   },
 ];
 ---
@@ -52,16 +63,16 @@ const projects = [
           >
             {project.description}
           </p>
-          {project.devblog && (
+          {project.link && project.linkKey && (
             <a
-              href={project.devblog}
+              href={project.link}
               target="_blank"
               rel="noopener noreferrer"
               class="inline-block text-sm mb-3 underline underline-offset-2 transition-colors hover:text-[var(--color-accent)]"
               style="color: var(--color-text);"
-              data-i18n={`project_${index}_devblog`}
+              data-i18n={project.linkKey}
             >
-              {project.devblogLabel}
+              {t[project.linkKey]}
             </a>
           )}
           <div class="flex flex-wrap gap-1.5">

@@ -98,7 +98,7 @@ All components are data-only (no external API calls at build time). Data arrays 
 | `About.astro` | Inline text | Two paragraphs, i18n |
 | `Skills.astro` | `skillGroups[]` | Spotlight card effect on hover |
 | `Experience.astro` | `experience[]` | Optional `highlights[]` per role |
-| `Projects.astro` | `projects[]` | Optional `devblog` URL per project |
+| `Projects.astro` | `projects[]` | Optional `link` URL + `linkKey` (i18n key for the link label) per project |
 | `Contact.astro` | `links[]` | Copy-to-clipboard button |
 | `Footer.astro` | Current year | Auto-computed |
 | `Terminal.astro` | Commands via registry | See Terminal section |
